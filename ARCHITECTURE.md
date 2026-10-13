@@ -11,7 +11,7 @@ Strategy Core 是一个模块化的量化交易策略执行框架，采用**单�
 
 ### 1.1 核心功能
 
-- **策略执行**: 加载并运行多个交易策略（CTA、ICT、Dolphin 等），每个策略独立进程
+- **策略执行**: 加载并运行多个交易策略（CTA 趋势、均值回归等），每个策略独立进程
 - **数据管理**: 从本地 CSV 文件加载 K 线数据，支持 WS 实时推送、自动同步和多时间框架聚合
 - **信号生成**: 策略根据市场分析生成交易信号
 - **信号持久化**: 信号自动写入 CSV 文件，单体模式下由策略进程直连交易所下单
@@ -259,8 +259,8 @@ python3 -m backtest.batch_runner
 
 | 策略 | 目录 | 说明 | 基类架构 | 时间周期 | 多标的 |
 |------|------|------|----------|----------|--------|
-| **example_ma_cross** | `strategies/example_ma_cross/` | 双均线交叉（单周期骨架，最简形态） | ✅ BaseStrategy | 4h | ✅ |
-| **example_mtf_trend** | `strategies/example_mtf_trend/` | 多周期趋势（1d/4h/1h 骨架） | ✅ BaseStrategy | 1d→多周期 | ✅ |
+| **example_ma_cross** | `strategies/example_ma_cross/` | 双均线交叉（单周期骨架，最简形态） | ✅ BaseStrategyCore | 4h | ✅ |
+| **example_mtf_trend** | `strategies/example_mtf_trend/` | 多周期趋势（1d/4h/1h 骨架） | ✅ BaseStrategyCore | 1d→多周期 | ✅ |
 
 **新架构策略结构**（以 `example_ma_cross` 为例；`config.yaml` 不放进策略目录）:
 ```

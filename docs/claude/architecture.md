@@ -50,7 +50,7 @@
 4. **数据完整性阻断**: 启动时扫描 CSV gap 并补齐，不完整则降级为 CSV 轮询
 5. **增量返回**: `get_klines()` 仅返回上次调用后的新数据
 6. **多时间框架聚合**: KlineRepository 自动将 1m 聚合成 4h/1h/15m
-7. **策略自主性**: 策略从各自的 `config.yaml` 加载配置，不依赖外部 ID
+7. **策略自主性**: 策略参数只从 `strategies/<name>/overrides/<SYMBOL>.yaml` 加载（唯一事实来源），不依赖外部 ID；策略目录内不放 `config.yaml`
 8. **HTTP 重试**: 网络异常与 5xx 指数退避重试，4xx 不重试
 9. **WS 无限重连**: 退避上限 120s，心跳 30s
 10. **仓位持久化**: 策略重启后从 JSON 文件恢复仓位，避免重复开仓。v3.7.1 起 `_notify_exit_and_clear` 无条件清理持久化文件（即使 `position_id=None`）

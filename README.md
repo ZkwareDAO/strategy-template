@@ -125,51 +125,28 @@ source .env && python3 run_strategies_manager.py
 ## 项目结构
 
 ```
-cta-strategy-code/
-├── run_strategies_manager.py  # 策略运行时管理器（入口）
-├── run_strategy.py            # 策略独立进程入口
-├── strategy_core/             # 核心框架
-│   ├── base/                  # 策略基类
-│   │   ├── strategy.py        #   BaseStrategy - 策略基类
-│   │   ├── core.py            #   BaseStrategyCore - 核心逻辑基类
-│   │   ├── state.py           #   BaseState - 状态基类
-│   │   └── indicators.py      #   共享指标计算（ADX, EMA 等）
-│   ├── signal_logging/        # 信号日志 + 信号参数构建
-│   │   ├── storage.py         #   Signal 数据模型
-│   │   ├── csv_adapter.py     #   CSV/JSON 格式转换
-│   │   ├── signal_params.py   #   信号参数构建（overrides → CtaSignalCSV）
-│   │   ├── logger.py          #   SignalStorage + SignalLogger
-│   │   └── binance_trader.py  #   直连下单执行器（单体模式唯一信号出口）
-│   ├── position_persistence.py# 仓位持久化
-│   └── utils/                 # 工具模块
-│       ├── strategies_loader.py #   策略配置加载（登记表 + overrides 展开）
-│       ├── env_placeholders.py  #   ${VAR} 占位符解析
-│       └── strategy_naming.py #   策略命名工具
-├── data_manager/              # 数据管理器
-│   ├── manager.py             #   DataManager 核心（5 个核心方法）
-│   ├── kline_repository.py    #   多时间框架聚合（1m→4h/1h/15m）
-│   ├── klines_ws_client.py    #   WebSocket 实时 K 线接收
-│   ├── klines_loader.py       #   K 线加载、重采样、CSV 持久化
-│   ├── indicators.py          #   技术指标计算（ADX, RSI, MACD, BOLL...）
-│   └── cache.py               #   分层缓存（1m 常驻 + 大周期 LRU）
-├── strategies/                # 策略插件（每个策略一个目录）
-│   ├── example_ma_cross/      #   单周期参考实现：双均线交叉（先读这个）
-│   │   ├── strategy.py        #     BaseStrategy 子类（接口层）
-│   │   ├── example_ma_cross_core.py  # BaseStrategyCore：analyze() 信号逻辑
-│   │   ├── overrides/         #     per-symbol 参数（唯一事实来源）
-│   │   └── tests/             #     测试写法
-│   ├── example_mtf_trend/     #   多周期参考实现：1d+4h+1h 三周期共振
-│   └── <你的策略>/            #   新策略照参考实现的结构创建
-├── backtest/                  # 回测框架（backtrader 适配层）
-├── data/                      # 数据目录
-│   ├── klines/                #   K 线数据 (CSV)，含 BTCUSDT 示例数据
-│   ├── signals/               #   信号日志 (CSV)
-│   └── positions/             #   仓位持久化 (JSON)
-├── config/                    # 配置文件
-│   ├── settings.yaml          #   系统层：数据源 / 信号 / 引擎
-│   └── strategies.yaml        #   编排层：跑哪些策略 × symbol
-├── scripts/                   # 工具脚本（含 download_data.py）
-└── docs/                      # 文档
+strategy-template/
+├── run_strategies_manager.py   # 策略运行时管理器（入口，进程监督者）
+├── run_strategy.py             # 策略独立进程入口
+├── strategy_core/              # 核心框架
+│   ├── base/                   #   策略基类（BaseStrategy / BaseStrategyCore / BaseState）
+│   ├── signal_logging/         #   信号存储 + 直连下单执行器
+│   └── position_persistence.py #   仓位持久化
+├── data_manager/               # 数据层：CSV 存储、WS 实时、多周期聚合、指标计算
+├── strategies/                 # 策略插件（每个策略一个目录）
+│   ├── example_ma_cross/       #   单周期参考实现：双均线交叉（先读这个）
+│   │   ├── strategy.py         #     BaseStrategy 子类（接口层）
+│   │   ├── *_core.py           #     BaseStrategyCore：analyze() 信号逻辑
+│   │   ├── overrides/          #     per-symbol 参数（唯一事实来源）
+│   │   └── tests/              #     测试写法
+│   ├── example_mtf_trend/      #   多周期参考实现：1d+4h+1h 三周期共振
+│   └── <你的策略>/             #   新策略照参考实现的结构创建
+├── backtest/                   # 回测框架（backtrader，与实盘共用策略代码和参数）
+├── config/                     # settings.yaml（系统层）+ strategies.yaml（编排层）
+├── data/                       # klines/（K 线 CSV，含示例数据）、signals/、positions/
+├── scripts/                    # 数据下载、批量回测/实盘、一键启停
+├── tests/                      # 根级测试
+└── docs/                       # 文档（入口：docs/INDEX.md）
 ```
 
 ---
@@ -178,8 +155,8 @@ cta-strategy-code/
 
 | 策略 | 说明 | 基类架构 | 时间周期 | 多标的 |
 |------|------|----------|----------|--------|
-| **example_ma_cross** | 双均线交叉（单周期参考实现，纯 pandas） | ✅ BaseStrategy | 4h | ✅ |
-| **example_mtf_trend** | 多周期趋势（1d 定方向 + 4h 触发 + 1h 确认） | ✅ BaseStrategy | 1d+4h+1h | ✅ |
+| **example_ma_cross** | 双均线交叉（单周期参考实现，纯 pandas） | ✅ BaseStrategyCore | 4h | ✅ |
+| **example_mtf_trend** | 多周期趋势（1d 定方向 + 4h 触发 + 1h 确认） | ✅ BaseStrategyCore | 1d+4h+1h | ✅ |
 
 本仓库作为**模板**发布，只保留参考实现。新增策略请看
 [docs/strategy/QUICKSTART.md](docs/strategy/QUICKSTART.md)——先完整读一遍
@@ -193,6 +170,7 @@ cta-strategy-code/
 | 文档 | 说明 |
 |------|------|
 | [ARCHITECTURE.md](ARCHITECTURE.md) | 系统架构详细文档 |
+| [CHANGELOG.md](CHANGELOG.md) | 变更日志 |
 | [docs/SYSTEM_OVERVIEW.md](docs/SYSTEM_OVERVIEW.md) | 系统概览和数据流 |
 | [docs/SCRIPTS.md](docs/SCRIPTS.md) | 脚本和命令行工具参考 |
 | [docs/SIGNAL_CSV_FORMAT.md](docs/SIGNAL_CSV_FORMAT.md) | 信号格式规范 |
