@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-CTA Strategy Core v3.7.0 - 模块化量化交易策略执行框架，**单体模式**。每个策略独立进程，直连 Binance 行情与下单（CCXT）。
+CTA Strategy Core v1.0.0 - 模块化量化交易策略执行框架，**单体模式**。每个策略独立进程，直连 Binance 行情与下单（CCXT）。
 
 ## 运行命令
 

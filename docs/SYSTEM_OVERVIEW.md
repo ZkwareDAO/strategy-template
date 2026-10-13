@@ -1,6 +1,6 @@
 # CTA Strategy Core 系统概览
 
-**版本**: 3.7.0
+**版本**: 1.0.0
 **更新日期**: 2026-09-06
 
 > 详细架构信息请参考 [ARCHITECTURE.md](../ARCHITECTURE.md)。

@@ -53,7 +53,7 @@
 7. **策略自主性**: 策略参数只从 `strategies/<name>/overrides/<SYMBOL>.yaml` 加载（唯一事实来源），不依赖外部 ID；策略目录内不放 `config.yaml`
 8. **HTTP 重试**: 网络异常与 5xx 指数退避重试，4xx 不重试
 9. **WS 无限重连**: 退避上限 120s，心跳 30s
-10. **仓位持久化**: 策略重启后从 JSON 文件恢复仓位，避免重复开仓。v3.7.1 起 `_notify_exit_and_clear` 无条件清理持久化文件（即使 `position_id=None`）
+10. **仓位持久化**: 策略重启后从 JSON 文件恢复仓位，避免重复开仓。v1.0.0 起 `_notify_exit_and_clear` 无条件清理持久化文件（即使 `position_id=None`）
 11. **确定性 signal_id**: 基于 K 线时间戳生成，实盘和回测 ID 一致
 13. **平仓信号防重复**: 60秒冷却期，防止同一 K 线周期内重复发送平仓信号
 

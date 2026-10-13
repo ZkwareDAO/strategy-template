@@ -1,6 +1,6 @@
 # 脚本参考文档
 
-**版本**: 3.7.0
+**版本**: 1.0.0
 **更新日期**: 2026-10-08
 
 本文档列出系统提供的所有命令行脚本和工具。所有命令均以仓库根目录为工作目录。
@@ -197,7 +197,7 @@ python3 scripts/resample_1m_to_multi_tf.py --symbol BTCUSDT --timeframes 15m,1h,
 python3 -m backtest.run_backtest --strategies example_ma_cross:BTCUSDT --start 20260610 --end 20260708
 ```
 
-**参数**（7 个，v3.7 配置收敛后）:
+**参数**（7 个，配置收敛后）:
 
 | 参数 | 必填 | 默认值 | 说明 |
 |------|------|--------|------|
